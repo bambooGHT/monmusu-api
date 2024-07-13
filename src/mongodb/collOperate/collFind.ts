@@ -44,8 +44,11 @@ class CollFind<F extends CollIndex[keyof CollIndex]> {
 
   async regexMatch<V extends Document = Document>(query: Unfold<QueryValue>, field: string, filterField?: Projection): Promise<V[]> {
     const queryObj: Document = {};
+
     if (query.includes.length) {
-      queryObj["$elemMatch"] = { $regex: `(${query.includes.join("|")})` };
+      queryObj["$all"] = query.includes.map(word => ({
+        $elemMatch: { $regex: word }
+      }));
     }
     if (query.excludes.length) {
       queryObj["$not"] = { $elemMatch: { $regex: `(${query.excludes.join("|")})` } };

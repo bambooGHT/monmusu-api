@@ -63,7 +63,7 @@ const getAbilityList = async (abilityIdList: number[]) => {
 
 const getUniqueWeapon = async (card_id: number) => {
   const uniqueWeaponValue = await dbColl("uniqueWeapon").findId<{ uw_id: number; }>(card_id, "card_id");
-  const uniqueWeaponAbility = uniqueWeaponValue ? {
+  const uniqueWeaponAbility = uniqueWeaponValue[0] ? {
     ability: await dbColl("uniqueWeaponAbility").findSingle(uniqueWeaponValue[0].uw_id),
     list: uniqueWeaponValue
   } : null;

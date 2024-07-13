@@ -14,9 +14,13 @@ export const unitSearch = async (raceFeatureText: string, skillText: string) => 
   let skillResults = skillText ?
     await collSkill.regexMatch<QueryResult>(processQuery(skillText, 10000, raceFeatureResultIds), "text.0") : undefined;
 
-  if (skillResults?.length && raceFeatureResults?.length) {
-    const resultIdList = new Set(skillResults.map(p => p.id));
-    raceFeatureResults = raceFeatureResults.filter(p => resultIdList.has(p.id));
+  if (raceFeatureText && skillText) {
+    if (skillResults?.length && raceFeatureResults?.length) {
+      const resultIdList = new Set(skillResults.map(p => p.id));
+      raceFeatureResults = raceFeatureResults.filter(p => resultIdList.has(p.id));
+    }
+
+    return { raceFeatures: [], skills: [] };
   }
 
   return processResults(raceFeatureResults, skillResults);
@@ -28,6 +32,7 @@ const processQuery = (text: string, maxRange: number, filterIdList?: number[]): 
 
   return Object.assign(processQueryText(text), { find: filter });
 };
+
 const processQueryText = (text: string): Omit<QueryValue, "find"> => {
   const [includes, excludes] = text.split("|");
   return {
